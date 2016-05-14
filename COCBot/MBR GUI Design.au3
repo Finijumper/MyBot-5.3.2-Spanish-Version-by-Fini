@@ -30,7 +30,7 @@ $tabMain = GUICtrlCreateTab(5, 65, 461, 445, $TCS_MULTILINE)
 ;~ ------------------------------------------------------
 
 $DonateMenu = GUICtrlCreateMenu("Donación PayPal")
-$DonateConfig = GUICtrlCreateMenuItem("Support the development", $DonateMenu)
+$DonateConfig = GUICtrlCreateMenuItem("Invitame a un café", $DonateMenu)
 $AboutMenu = GUICtrlCreateMenu("Ayuda")
 $ModSupportConfig = GUICtrlCreateMenuItem("Spoporte del Mod", $AboutMenu)
 $AboutConfig = GUICtrlCreateMenuItem("Sobre nosotros", $AboutMenu)
