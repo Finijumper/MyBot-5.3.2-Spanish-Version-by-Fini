@@ -1077,7 +1077,7 @@ Global $MinorObstacle = False
 Global Const $dirLanguages = @ScriptDir & "\Languages\"
 Global $sLanguage = "English"
 Global $aLanguageFile[1][2]; undimmed language file array [FileName][DisplayName]
-Global Const $sDefaultLanguage = "Spanish"
+Global Const $sDefaultLanguage = "English"
 Global $aLanguage[1][1] ;undimmed language array
 
 ;images
