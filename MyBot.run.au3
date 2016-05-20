@@ -45,7 +45,7 @@ EndIf
 #include "COCBot\functions\Chatbot\Chatbot.au3"
 
 $sBotVersion = "v5.3.2" ;~ Don't add more here, but below. Version can't be longer than vX.y.z because it it also use on Checkversion()
-$sBotTitle = "All In One My Bot " & $sBotVersion & " Spanish Version 0.0.1  by Fini " ;~ Don't use any non file name supported characters like \ / : * ? " < > |
+$sBotTitle = "All In One My Bot " & $sBotVersion & " Spanish Version 0.0.3  by Fini " ;~ Don't use any non file name supported characters like \ / : * ? " < > |
 
 Global $sBotTitleDefault = $sBotTitle
 
