@@ -119,7 +119,7 @@ Func GUIControl($hWind, $iMsg, $wParam, $lParam)
 				Case $DonateConfig
 					ShellExecute("https://www.paypal.me/Finijumper")
 				Case $CheckVersionConfig
-					If CheckMODVersion() Then MsgBox(0, "", "You Are Using The Latest Version Of Mod All In One")
+					If CheckMODVersion() Then MsgBox(0, "", "Estás usando la última versión de MyBot 5.3.2 Spanish Version by Fini")
 				Case $DownloadLatestConfig
 					ShellExecute("https://github.com/amintalkin/Merged-MyBot-5.3.2-AIO-v1.3.5-B25/archive/master.zip")
 				Case $ModSupportConfig
