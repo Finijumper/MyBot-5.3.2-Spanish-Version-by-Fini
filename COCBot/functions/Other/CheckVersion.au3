@@ -19,7 +19,7 @@ Func CheckVersion()
 		If $lastversion = "" Then
 			SetLog("WE CANNOT OBTAIN PRODUCT VERSION AT THIS TIME", $COLOR_ORANGE)
 		ElseIf VersionNumFromVersionTXT($sBotVersion) < VersionNumFromVersionTXT($lastversion) Then
-			SetLog("ALERTA, TU VERSIÓN DEL BOT  (" & $sBotVersion & ") ESTÁ DESACTUALIZADA.", $COLOR_RED)
+			SetLog("WARNING, YOUR BOT VERSION (" & $sBotVersion & ") IS OUT OF DATE.", $COLOR_RED)
 			SetLog("PLEASE DOWNLOAD THE LATEST(" & $lastversion & ") FROM https://MyBot.run               ", $COLOR_RED)
 			SetLog(" ")
 			_PrintLogVersion($oldversmessage)
@@ -29,7 +29,7 @@ Func CheckVersion()
 			SetLog("OFFICIAL VERSION: " & $lastversion, $COLOR_GREEN)
 			SetLog(" ")
 		Else
-			SetLog("BIENVENIDO, TIENES LA ÚLTIMA VERSIÓN DEL BOT", $COLOR_GREEN)
+			SetLog("WELCOME CHIEF, YOU HAVE THE LATEST VERSION OF THE BOT", $COLOR_GREEN)
 			SetLog(" ")
 			_PrintLogVersion($lastmessage)
 		EndIf
@@ -102,7 +102,7 @@ Func CheckMODVersion()
 	EndIf
 
 	Local $tempJson = @ScriptDir & "\Temp.json"
-	$hDownload = InetGet("https://api.github.com/repos/amintalkin/Merged-MyBot-5.3.2-AIO-v1.3.5-B25", $tempJson, 0, 1)
+	$hDownload = InetGet("https://api.github.com/repos/amintalkin/Merged-MyBot-5.3.2-AIO-v1.3.5-B26", $tempJson, 0, 1)
 	; Wait for the download to complete by monitoring when the 2nd index value of InetGetInfo returns True.
 	Local $i = 0
 	Do
