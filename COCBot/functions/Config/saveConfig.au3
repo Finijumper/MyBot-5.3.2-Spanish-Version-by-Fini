@@ -1218,7 +1218,51 @@ EndIf
 	Else
 		IniWrite($config, "pushbullet", "DeleteOldPushes", 0)
 	EndIf
+	; IceCube (PushBullet Revamp v1.1)
+	;Remote Control
+	If GUICtrlRead($chkAlertTopGain) = $GUI_CHECKED Then
+		IniWrite($config, "pushbullet", "AlertTopGain", 1)
+	Else
+		IniWrite($config, "pushbullet", "AlertTopGain", 0)
+	EndIf
+	If GUICtrlRead($chkAlertMFSwitch) = $GUI_CHECKED Then
+		IniWrite($config, "pushbullet", "AlertMFSwitch", 1)
+	Else
+		IniWrite($config, "pushbullet", "AlertMFSwitch", 0)
+	EndIf
+	
+	;Scheduler
+	If GUICtrlRead($chkNotifyWeekDays) = $GUI_CHECKED Then
+		IniWrite($config, "pushbullet", "NotifyWeekDaysEnable", 1)
+	Else
+		IniWrite($config, "pushbullet", "NotifyWeekDaysEnable", 0)
+	EndIf
+	Local $string = ""
+	For $i = 0 To 6
+		If GUICtrlRead(Eval("chkNotifyWeekdays" & $i)) = $GUI_CHECKED Then
+			$string &= "1|"
+		Else
+			$string &= "0|"
+		EndIf
+	Next
+	IniWrite($config, "pushbullet", "NotifyWeekDays", $string)
+	If GUICtrlRead($chkNotifyHours) = $GUI_CHECKED Then
+		IniWrite($config, "pushbullet", "NotifyHoursEnable", 1)
+	Else
+		IniWrite($config, "pushbullet", "NotifyHoursEnable", 0)
+	EndIf
 
+	Local $string = ""
+	For $i = 0 To 23
+		If GUICtrlRead(Eval("chkNotifyHours" & $i)) = $GUI_CHECKED Then
+			$string &= "1|"
+		Else
+			$string &= "0|"
+		EndIf
+	Next
+	IniWrite($config, "pushbullet", "NotifyHours", $string)
+	; IceCube (PushBullet Revamp v1.1)
+	
 	IniWrite($config, "other", "WAOffsetX", GUICtrlRead($txtWAOffsetX))
 	IniWrite($config, "other", "WAOffsetY", GUICtrlRead($txtWAOffsetY))
 
@@ -1613,8 +1657,10 @@ EndIf
 
 	If GUICtrlRead($radClickSpeedFast) = $GUI_CHECKED Then
 		IniWrite($config, "attackCSV", "ClickSpeedFast", 1)
-	Else
+	ElseIf GUICtrlRead($radClickSpeedNormal) = $GUI_CHECKED Then
 		IniWrite($config, "attackCSV", "ClickSpeedFast", 0)
+	Else
+		IniWrite($config, "attackCSV", "ClickSpeedFast", 2)
 	EndIf
 
 	;MOD Settings--------------------------------------------------------------------------
@@ -1662,6 +1708,13 @@ EndIf
 ;~     IniWrite($config, "MilkingAttack", "TownhallTiles", $MilkFarmTHMaxTilesFromBorder)
 ;~     IniWrite($config, "MilkingAttack", "TownHallAlgorithm", $MilkFarmAlgorithmTh)
 ;~     IniWrite($config, "MilkingAttack", "TownHallHitAnyway", $MilkFarmSnipeEvenIfNoExtractorsFound)
+
+	;Wait For Spells
+	If GUICtrlRead($chkWaitForSpells) = $GUI_CHECKED Then
+		IniWrite($config, "troop", "WaitForSpells", 1)
+	Else
+		IniWrite($config, "troop", "WaitForSpells", 0)
+	EndIf
 
 	;Profile Switch Settings
 	If GUICtrlRead($chkGoldSwitchMax) = $GUI_CHECKED Then
@@ -1754,6 +1807,13 @@ EndIf
 	EndIf
 	IniWrite($config, "SaveTroops", "PercentCollectors", GUICtrlRead($txtPercentCollectors))
 	IniWrite($config, "SaveTroops", "MaxDistance", GUICtrlRead($txtDistance))
+
+	; Misc Battle Settings - Added by LunaEclipse
+	If GUICtrlRead($chkFastADBClicks) = $GUI_CHECKED Then
+		IniWrite($config, "Fast Clicks", "UseADBFastClicks", 1)
+	Else
+		IniWrite($config, "Fast Clicks", "UseADBFastClicks", 0)
+	EndIf
 
 	; Custom Deployment Settings - Added by LunaEclipse
 	IniWrite($config, "Custom Deployment", "Deployment", deployArrayToString($deployValues))

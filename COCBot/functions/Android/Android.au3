@@ -13,6 +13,35 @@
 ; Example .......: No
 ; ===============================================================================================================================
 
+#include <File.au3>
+
+; Removes any files for ADB not associated with a running Bot pID, or own files when $mineOnly is true
+Func cleanUnusedADBFiles($mineOnly = False)
+	Local $hostPath = $AndroidPicturesHostPath & $AndroidPicturesHostFolder
+	Local $files = _FileListToArray($hostPath, "*")
+	Local $runningBots = getActiveBotPIDs()
+	Local $fileDetails
+
+	If IsArray($files) And UBound($files) > 1 Then
+		For $i = 1 To UBound($files) - 1
+			$fileDetails = StringSplit($files[$i], ".", $STR_NOCOUNT)
+
+			If IsArray($fileDetails) And UBound($fileDetails) > 1 Then
+				Switch $fileDetails[1]
+					Case "RAW", "MOV", "JPG", "THM"
+						If Not $mineOnly Then
+							If Not existsPID($runningBots, $fileDetails[0]) Then FileDelete($hostPath & $files[$i])
+						Else
+							If $fileDetails[0] = @AutoItPID Then FileDelete($hostPath & $files[$i])
+						EndIf
+					Case Else
+						; Don't do anything
+				EndSwitch
+			EndIf
+		Next
+	EndIf
+EndFunc   ;==>cleanUnusedADBFiles
+
 ; Update Global Android variables based on $AndroidConfig index
 ; Calls "Update" & $Android & "Config()"
 Func UpdateAndroidConfig($instance = Default)
@@ -330,6 +359,7 @@ Func InitAndroid($bCheckOnly = False)
 	   SetDebugLog("Android ADB Shared Folder: " & $AndroidPicturesPath)
 	   ; add $AndroidPicturesHostFolder to $AndroidPicturesHostPath
 	   If FileExists($AndroidPicturesHostPath) Then
+		 DirRemove($AndroidPicturesHostPath & $AndroidPicturesHostFolder, 1)
 		 DirCreate($AndroidPicturesHostPath & $AndroidPicturesHostFolder)
 	   EndIf
 	   SetDebugLog("Android ADB Shared Folder on Host: " & $AndroidPicturesHostPath)
@@ -851,10 +881,10 @@ Func AndroidAdbSendShellCommandScript($scriptFile, $combine = true, $timeout = D
    FileClose($hFileOpen)
    Local $scriptModifiedTime = FileGetTime($AdbScriptsDir & "\" & $scriptFile, $FT_MODIFIED, $FT_STRING)
 
-   Local $scriptFileSh = $scriptFile & ".sh"
+   Local $scriptFileSh = $scriptFile & ".THM"
    $script = StringReplace($script, "{$AndroidMouseDevice}", $AndroidMouseDevice)
    If @extended > 0 Then
-	  $scriptFileSh = $scriptFile & StringReplace($AndroidMouseDevice, "/", ".") & ".sh"
+	  $scriptFileSh = $scriptFile & StringReplace($AndroidMouseDevice, "/", ".") & ".THM"
    EndIf
    $script = StringReplace($script, @CRLF, @LF)
 
@@ -975,8 +1005,8 @@ Func AndroidScreencap($iLeft, $iTop, $iWidth, $iHeight, $iRetryCount = 0)
    AndroidAdbLaunchShellInstance($wasRunState)
    If @error <> 0 Then Return SetError(2, 0)
 
-   Local $filename = $sBotTitle & ".rgba"
-   If $AndroidAdbScreencapPngEnabled = True Then $filename = $sBotTitle & ".png"
+   Local $filename = @AutoItPID & ".JPG"
+   If $AndroidAdbScreencapPngEnabled = True Then $filename = @AutoItPID & ".png"
    Local $s
 
    ; Create 32 bits-per-pixel device-independent bitmap (DIB)
@@ -1266,8 +1296,8 @@ Func AndroidZoomOut($loopCount = 0, $timeout = Default, $wasRunState = $RunState
    If StringInStr($AndroidMouseDevice, "/dev/input/event") = 0 Then Return SetError(2, 0, 0)
 
    Local $scriptFile = ""
-   If $scriptFile = "" And FileExists($AdbScriptsDir & "\ZoomOut." & $Android & ".getevent") = 1 Then $scriptFile = "ZoomOut." & $Android & ".getevent"
-   If $scriptFile = "" Then $scriptFile = "ZoomOut.getevent"
+   If $scriptFile = "" And FileExists($AdbScriptsDir & "\mypictures." & $Android & ".getevent") = 1 Then $scriptFile = "mypictures." & $Android & ".getevent"
+   If $scriptFile = "" Then $scriptFile = "mypictures.getevent"
    If FileExists($AdbScriptsDir & "\" & $scriptFile) = 0 Then SetError(1, 0, 0)
    AndroidAdbSendShellCommandScript($scriptFile, True, $timeout, $wasRunState)
    Return SetError(@error, @extended, (@error = 0 ? 1 : -@error))
@@ -1337,7 +1367,7 @@ Func AndroidMoveMouseAnywhere()
    Local $_SilentSetLog = $SilentSetLog
    Local $hostPath = $AndroidPicturesHostPath & $AndroidPicturesHostFolder
    Local $androidPath = $AndroidPicturesPath & StringReplace($AndroidPicturesHostFolder, "\", "/")
-   Local $filename = $sBotTitle & ".moveaway"
+   Local $filename = @AutoItPID & ".MOV"
    Local $recordsNum = 4
    Local $iToWrite = $recordsNum * 16
    Local $records = ""
@@ -1373,7 +1403,7 @@ Func AndroidMoveMouseAnywhere()
    EndIf
 
    $SilentSetLog = True
-   AndroidAdbSendShellCommand("dd if=""" & $androidPath & $sBotTitle & ".moveaway"" of=" & $AndroidMouseDevice & " obs=" & $iToWrite & ">/dev/null 2>&1" & $sleep, Default)
+   AndroidAdbSendShellCommand("dd if=""" & $androidPath & @AutoItPID & ".MOV"" of=" & $AndroidMouseDevice & " obs=" & $iToWrite & ">/dev/null 2>&1" & $sleep, Default)
    $SilentSetLog = $_SilentSetLog
 
 EndFunc
@@ -1417,7 +1447,7 @@ Func AndroidFastClick($x, $y, $times = 1, $speed = 0, $checkProblemAffect = True
 	  Return SetError($error, 0)
    EndIf
    #ce
-   Local $filename = $sBotTitle & ".click"
+   Local $filename = @AutoItPID & ".RAW"
    Local $record = "byte[16];"
    Local $records = ""
    Local $loops = 1

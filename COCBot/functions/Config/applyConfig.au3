@@ -1142,8 +1142,46 @@ Func applyConfig($bRedrawAtExit = True) ;Applies the data from config to the con
 		GUICtrlSetState($chkDeleteOldPushes, $GUI_UNCHECKED)
 	EndIf
 	chkDeleteOldPushes()
-
-
+	; IceCube (PushBullet Revamp v1.1)	
+	;Remote Control
+	If $pAlertTopGain = 1 Then
+		GUICtrlSetState($chkAlertTopGain, $GUI_CHECKED)
+	ElseIf $pAlertTopGain = 0 Then
+		GUICtrlSetState($chkAlertTopGain, $GUI_UNCHECKED)
+	EndIf
+	If $pAlertMFSwitch = 1 Then
+		GUICtrlSetState($chkAlertMFSwitch, $GUI_CHECKED)
+	ElseIf $pAlertTopGain = 0 Then
+		GUICtrlSetState($chkAlertMFSwitch, $GUI_UNCHECKED)
+	EndIf
+	;Scheduler
+	If $iPlannedNotifyHoursEnable = 1 Then
+		GUICtrlSetState($chkNotifyHours, $GUI_CHECKED)
+	Else
+		GUICtrlSetState($chkNotifyHours, $GUI_UNCHECKED)
+	EndIf
+	chkNotifyHours()
+	For $i = 0 To 23
+		If $iPlannedNotifyHours[$i] = 1 Then
+			GUICtrlSetState(Eval("chkNotifyHours" & $i), $GUI_CHECKED)
+		Else
+			GUICtrlSetState(Eval("chkNotifyHours" & $i), $GUI_UNCHECKED)
+		EndIf
+	Next
+	If $iPlannedNotifyWeekDaysEnable = 1 Then
+		GUICtrlSetState($chkNotifyWeekDays, $GUI_CHECKED)
+	Else
+		GUICtrlSetState($chkNotifyWeekDays, $GUI_UNCHECKED)
+	EndIf
+	chkNotifyWeekDays()
+	For $i = 0 To 6
+		If $iPlannedNotifyWeekDays[$i] = 1 Then
+			GUICtrlSetState(Eval("chkNotifyWeekdays" & $i), $GUI_CHECKED)
+		Else
+			GUICtrlSetState(Eval("chkNotifyWeekdays" & $i), $GUI_UNCHECKED)
+		EndIf
+	Next
+	; IceCube (PushBullet Revamp v1.1)	
 	;Other Settings--------------------------------------------------------------------------
 
 	;Lab
@@ -1754,11 +1792,24 @@ EndIf
 	If $iRadClickSpeedFast = 1 Then
 		GUICtrlSetState($radClickSpeedFast, $GUI_CHECKED)
 		GUICtrlSetState($radClickSpeedNormal, $GUI_UNCHECKED)
-	Else
+		GUICtrlSetState($radClickSpeedCSV, $GUI_UNCHECKED)
+	ElseIf $iRadClickSpeedFast = 0 Then
 		GUICtrlSetState($radClickSpeedFast, $GUI_UNCHECKED)
 		GUICtrlSetState($radClickSpeedNormal, $GUI_CHECKED)
+		GUICtrlSetState($radClickSpeedCSV, $GUI_UNCHECKED)
+	Else
+		GUICtrlSetState($radClickSpeedFast, $GUI_UNCHECKED)
+		GUICtrlSetState($radClickSpeedNormal, $GUI_UNCHECKED)
+		GUICtrlSetState($radClickSpeedCSV, $GUI_CHECKED)
 	EndIf
 
+	;Wait For Spells
+	If $iWaitForSpells = 1 Then
+		GUICtrlSetState($chkWaitForSpells, $GUI_CHECKED)
+	Else
+		GUICtrlSetState($chkWaitForSpells, $GUI_UNCHECKED)
+	EndIf
+	
 	;Multi Farming Settings--------------------------------------------------------------------------
 	If $ichkSwitchDonate = 1 Then
 		GUICtrlSetState($chkSwitchDonate, $GUI_CHECKED)
@@ -1867,6 +1918,15 @@ EndIf
 	EndIf
 	GUICtrlSetData($txtPercentCollectors, $percentCollectors)
 	GUICtrlSetData($txtDistance, $redlineDistance)
+
+	; Misc Battle Settings - Added by LunaEclipse
+	If $AndroidAdbClicksEnabled = 1 Then
+		GUICtrlSetState($chkFastADBClicks, $GUI_CHECKED)
+		$AndroidAdbClicksEnabled = True
+	Else
+		GUICtrlSetState($chkFastADBClicks, $GUI_UNCHECKED)
+		$AndroidAdbClicksEnabled = False
+	EndIf
 
 	; Custom Deployment Settings - Added by LunaEclipse
 	GUICtrlSetData($txtTownHall, $valueTownHall)

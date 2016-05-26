@@ -48,6 +48,9 @@
 #include <IE.au3>
 #include <Process.au3>
 
+
+Global Const $LatestVersionExpected = "Merged-MyBot-5.3.2-AIO-v1.3.5-B25"
+
 Global Const $DEFAULT_HEIGHT = 780
 Global Const $DEFAULT_WIDTH = 860
 Global Const $midOffsetY = ($DEFAULT_HEIGHT - 720) / 2
@@ -114,11 +117,11 @@ Global $__MEmu_PhoneLayout = "0"
 ;                |                |                        |                                  |             |                   |                    |                   |                    |              |                 |4 = ADB mouse click   |                   |
 ;                |                |                        |                                  |             |                   |                    |                   |                    |              |                 |8 = ADB input text and swipe              |
 Global $AndroidAppConfig[5][14] = [ _ ;                    |                                  |             |                   |                    |                   |                    |              |                 |16 = ADB shell is steady                  |
+   ["MEmu",       "MEmu",          "MEmu 2.",              "[CLASS:subWin; INSTANCE:1]",       "",           $DEFAULT_WIDTH,     $DEFAULT_HEIGHT - 12,$DEFAULT_WIDTH + 51,$DEFAULT_HEIGHT + 24,0,             "127.0.0.1:21503",0+2+4+8+16            ,'# ',               'Microvirt Virtual Input'], _
+   ["Nox",        "nox",           "No",                   "[CLASS:subWin; INSTANCE:1]",       "",           $DEFAULT_WIDTH,     $DEFAULT_HEIGHT - 48,$DEFAULT_WIDTH +  4,$DEFAULT_HEIGHT - 10,0,             "127.0.0.1:62001",0+2+4+8+16            ,'# ',               'nox Virtual Input'], _
    ["BlueStacks", "",              "BlueStacks App Player","[CLASS:BlueStacksApp; INSTANCE:1]","_ctl.Window",$DEFAULT_WIDTH,     $DEFAULT_HEIGHT - 48,$DEFAULT_WIDTH,     $DEFAULT_HEIGHT - 48,0,             "emulator-5554",  1    +8               ,'$ ',               'BlueStacks Virtual Touch'], _
    ["BlueStacks2","",              "BlueStacks ",          "[CLASS:BlueStacksApp; INSTANCE:1]","_ctl.Window",$DEFAULT_WIDTH,     $DEFAULT_HEIGHT - 48,$DEFAULT_WIDTH,     $DEFAULT_HEIGHT - 48,0,             "emulator-5554",  1    +8               ,'$ ',               'BlueStacks Virtual Touch'], _
-   ["Droid4X",    "droid4x",       "Droid4X 0.",           "[CLASS:subWin; INSTANCE:1]",       "",           $DEFAULT_WIDTH,     $DEFAULT_HEIGHT - 48,$DEFAULT_WIDTH + 10,$DEFAULT_HEIGHT + 50,0,             "127.0.0.1:26944",0+2+4+8+16            ,'# ',               'droid4x Virtual Input'], _
-   ["MEmu",       "MEmu",          "MEmu 2.",              "[CLASS:subWin; INSTANCE:1]",       "",           $DEFAULT_WIDTH,     $DEFAULT_HEIGHT - 12,$DEFAULT_WIDTH + 51,$DEFAULT_HEIGHT + 24,0,             "127.0.0.1:21503",0+2+4+8+16            ,'# ',               'Microvirt Virtual Input'], _
-   ["Nox",        "nox",           "No",                   "[CLASS:subWin; INSTANCE:1]",       "",           $DEFAULT_WIDTH,     $DEFAULT_HEIGHT - 48,$DEFAULT_WIDTH +  4,$DEFAULT_HEIGHT - 10,0,             "127.0.0.1:62001",0+2+4+8+16            ,'# ',               'nox Virtual Input'] _
+   ["Droid4X",    "droid4x",       "Droid4X 0.",           "[CLASS:subWin; INSTANCE:1]",       "",           $DEFAULT_WIDTH,     $DEFAULT_HEIGHT - 48,$DEFAULT_WIDTH + 10,$DEFAULT_HEIGHT + 50,0,             "127.0.0.1:26944",0+2+4+8+16            ,'# ',               'droid4x Virtual Input'] _
 ]
 Global $OnlyInstance = True
 Global $FoundRunningAndroid = False
@@ -164,7 +167,7 @@ Global $AndroidAdbPid = 0 ; Single instance of ADB used for screencap (and sende
 Global $AndroidAdbPrompt = "mybot.run:" ; Single instance of ADB PS1 prompt
 Global $AndroidPicturesPath = ""; Android mounted path to pictures on host
 Global $AndroidPicturesHostPath = ""; Windows host path to mounted pictures in android
-Global $AndroidPicturesHostFolder = "mybot.run\" ; Subfolder for host and android, can be "", must end with "\" when used
+Global $AndroidPicturesHostFolder = "mypictures\" ; Subfolder for host and android, can be "", must end with "\" when used
 Global $AndroidPicturesPathAutoConfig = True ; Try to configure missing shared folder if missing
 ; Special ADB modes for screencap, mouse clicks and input text
 Global $AndroidAdbAutoTerminateCount = 0 ; Counter for $AndroidAdbAutoTerminate to terminate ADB shell automatically after x executed commands
@@ -359,11 +362,13 @@ Global $sLogFName
 Global $sAttackLogFName
 Global $AttackFile
 Global $RequestScreenshot = 0
-; IceCube (PushBullet Revamp v1.0)	
+; IceCube (PushBullet Revamp v1.1)	
+Global $pAlertTopGain
+Global $pAlertMFSwitch
 Global $RequestScreenshotHD = 0
 Global $RequestBuilderInfo = 0
 Global $RequestShieldInfo = 0
-; IceCube (PushBullet Revamp v1.0)	
+; IceCube (PushBullet Revamp v1.1)	
 Global $iDeleteAllPushes = 0
 Global $iDeleteAllPushesNow = False
 Global $ichkDeleteOldPushes
@@ -376,7 +381,13 @@ Global $iCollectCounter = 11 ; Collect counter, when reaches $COLLECTATCOUNT, it
 Global $COLLECTATCOUNT = 10 ; Run Collect() after this amount of times before actually collect
 Global $ichkAlertBuilderIdle
 Global $iReportIdleBuilder = 0
-
+; IceCube (PushBullet Revamp v1.1)	
+Global $iplannedNotifyhoursenable		;Notify Scheduler
+Global $iPlannedNotifyWeekDaysEnable	;Notify Scheduler
+Global $iPlannedNotifyHours[24]			;Notify Scheduler
+Global $iPlannedNotifyWeekDays[7] ; 0= Sunday , 1= Monday , 2= Tuesday, 3= Wednesday, 4= Thursday, 5= Friday, 6= Saturday
+Global $iForceNotify = 0				;Force notify even Notify Scheduler is not active
+; IceCube (PushBullet Revamp v1.1)	
 ;---------------------------------------------------------------------------------------------------
 Global $BSpos[2] ; Inside Android window positions relative to the screen, [x,y]
 Global $BSrpos[2] ; Inside Android window positions relative to the window, [x,y]
@@ -735,6 +746,9 @@ Global $ichkBackground ; Background mode enabled disabled
 Global $collectorPos[17][2] ;Positions of each collectors
 Global $D[4] = [99, 111, 109, 47]
 
+; IceCube (Misc v1.0)
+Global $banned = @ScriptDir & "\images\banned.bmp"
+; IceCube (Misc v1.0)
 Global $break = @ScriptDir & "\images\break.bmp"
 Global $device = @ScriptDir & "\images\device.bmp"
 Global $CocStopped = @ScriptDir & "\images\CocStopped.bmp"
@@ -1098,7 +1112,9 @@ Global $attackcsv_locate_gold_storage = 0
 Global $attackcsv_locate_elixir_storage = 0
 Global $attackcsv_locate_dark_storage = 0
 Global $attackcsv_locate_townhall = 0
+
 Global $attackcsv_use_red_line = 1
+Global $attackcsv_csv_speed = 1
 
 ;Milking Attack
 Global $debugresourcesoffset = 0 ;make images with offset to check correct adjust values
@@ -1153,6 +1169,9 @@ Global $hCollectorGUI = 0
 ;About GUI - AminTalkin
 Global $hAboutGUI = 0
 
+;Wait For Spell
+Global $iWaitForSpells, $chkWaitForSpells, $iTotalSpellSpace = 0
+
 Global $iDeadBase75percent = 1
 Global $iDeadBase75percentStartLevel = 4
 ;milk GUI
@@ -1182,7 +1201,7 @@ If $aCmdLine[0] > 1 Then
 	Next
 EndIf
 
-;Multy Farming
+;Multy-Farming
 Global $iSwCount
 Global $ichkSwitchDonate
 Global $ichkMultyFarming
@@ -1190,7 +1209,7 @@ Global $iAccount, $OkLoc, $AccountLoc
 Global $iconfirm
 Global $bAccount[4] = ["Main", "Second", "Third", "Fourth"]
 
-Global $iRadClickSpeedFast, $radClickSpeedFast, $radClickSpeedNormal
+Global $iRadClickSpeedFast, $radClickSpeedFast, $radClickSpeedNormal, $radClickSpeedCSV
 Global $dbBase
 Global $TroopDropNumber = 0
 Global $remainingTroops[12][2]

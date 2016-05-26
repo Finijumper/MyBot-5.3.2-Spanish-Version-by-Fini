@@ -36,11 +36,16 @@ Func ParseAttackCSV($debug = False)
 		Local $filename = $scmbABScriptName
 	EndIf
 	Setlog("execute " & $filename)
-	If $iRadClickSpeedFast = 1 Then
-		Setlog("Deploy Speed: Fast", $COLOR_BLUE)
-	Else
-		Setlog("Deploy Speed: Normal", $COLOR_BLUE)
-	EndIf
+	
+	If $attackcsv_csv_speed = 0 Then
+	   If $iRadClickSpeedFast = 1 Then
+		   Setlog("Deploy Speed: Fast", $COLOR_BLUE)
+	   Else
+		   Setlog("Deploy Speed: Normal", $COLOR_BLUE)
+		EndIf
+	 Else
+		Setlog("Deploy Speed: CSV", $COLOR_BLUE)
+	 EndIf
 
 	Local $f, $line, $acommand, $command
 	Local $value1, $value2, $value3, $value4, $value5, $value6, $value7, $value8, $value9
@@ -285,7 +290,11 @@ Func ParseAttackCSV($debug = False)
 								$sleepdrop2 = 1
 							EndIf
 						EndIf
-						DropTroopFromINI($value1, $index1, $index2, $qty1, $qty2, $value4, $delaypoints1, $delaypoints2, $delaydrop1, $delaydrop2, $sleepdrop1, $sleepdrop2, $isQtyPercent, $isIndexPercent, $debug)
+						 If $attackcsv_csv_speed = 0 Then
+						   DropTroopFromINI2($value1, $index1, $index2, $qty1, $qty2, $value4, $delaypoints1, $delaypoints2, $delaydrop1, $delaydrop2, $sleepdrop1, $sleepdrop2, $isQtyPercent, $isIndexPercent, $debug)
+						Else
+						   DropTroopFromINI($value1, $index1, $index2, $qty1, $qty2, $value4, $delaypoints1, $delaypoints2, $delaydrop1, $delaydrop2, $sleepdrop1, $sleepdrop2, $debug)
+						EndIf
 					Case "WAIT"
 						;sleep time
 						Local $sleep1, $sleep2, $sleepvect

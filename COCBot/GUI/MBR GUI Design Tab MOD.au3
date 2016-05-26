@@ -94,11 +94,11 @@ $tabMOD = GUICtrlCreateTabItem("Mods")
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
 
 	;;;;;;;;;;;;;;;;;
-    ;;; Mult-Farming
+    ;;; Multy-Farming
     ;;;;;;;;;;;;;;;;;
 	Local $x = 35, $y = 335
-	; IceCube (Multy-Farming Fast Switch v1.3)
-	$grpMultyFarming = GUICtrlCreateGroup(GetTranslated(17,1, "Multy-Farming"), $x - 20, $y - 20, 440, 60)
+	; IceCube (Multy-Farming Revamp v1.6)
+	$grpMultyFarming = GUICtrlCreateGroup( "Multy-Farming with Smart Switch", $x - 20, $y - 20, 440, 60)
 	;$x -= 10
 		$chkMultyFarming = GUICtrlCreateCheckbox(GetTranslated(17,1, "Multy-Farming"), $x - 10, $y -7, -1 , -1)
 			$txtTip = GetTranslated(17,3, "Will switch account and attack, then switch back")
@@ -109,7 +109,7 @@ $tabMOD = GUICtrlCreateTabItem("Mods")
 			GUICtrlSetTip(-1, $txtTip)
 			GUICtrlSetOnEvent(-1, "SwitchAndDonate")
 		$Account = GUICtrlCreateInput("2", $x +170, $y -7, 15, 15, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
-			$txtTip = GetTranslated(17,5, "How many account to use For multy farming")
+			$txtTip = GetTranslated(17,5, "How many account to use For multy-farming")
 			GUICtrlSetTip(-1, $txtTip)
 			GUICtrlSetLimit(-1, 4)
 			GUICtrlSetState(-1, $GUI_DISABLE)
@@ -119,27 +119,32 @@ $tabMOD = GUICtrlCreateTabItem("Mods")
 		$lblmultyAccBtn = GUICtrlCreateLabel(GetTranslated(17, 20, "Fast Switch:"), $x +95, $y +18, -1, -1)
 			$txtTip = GetTranslated(17, 21, "Fast switch between accounts")
 			GUICtrlSetTip(-1, $txtTip)
-		$btnmultyAcc1 = GUICtrlCreateButton("#1", $x + 170, $y +15, -1, 18)
-			$txtTip = GetTranslated(17,22, "Change to Main Account")
+		$btnmultyAcc1 = GUICtrlCreateButton("#1", $x + 170, $y +15, 20, 18)
+			$txtTip = GetTranslated(17,22, "Switch to Main Account")
 			GUICtrlSetTip(-1, $txtTip)
 			GUICtrlSetOnEvent(-1, "btnmultyAcc1")
 			GUICtrlSetState(-1, $GUI_DISABLE)			
-		$btnmultyAcc2 = GUICtrlCreateButton("#2", $x + 200, $y +15, -1, 18)
-			$txtTip = GetTranslated(17,23, "Change to Second Account")
+		$btnmultyAcc2 = GUICtrlCreateButton("#2", $x + 200, $y +15, 20, 18)
+			$txtTip = GetTranslated(17,23, "Switch to Second Account")
 			GUICtrlSetTip(-1, $txtTip)
 			GUICtrlSetOnEvent(-1, "btnmultyAcc2")
 			GUICtrlSetState(-1, $GUI_DISABLE)	
-		$btnmultyAcc3 = GUICtrlCreateButton("#3", $x + 230, $y +15, -1, 18)
-			$txtTip = GetTranslated(17,24, "Change to Third Account")
+		$btnmultyAcc3 = GUICtrlCreateButton("#3", $x + 230, $y +15, 20, 18)
+			$txtTip = GetTranslated(17,24, "Switch to Third Account")
 			GUICtrlSetTip(-1, $txtTip)
 			GUICtrlSetOnEvent(-1, "btnmultyAcc3")
 			GUICtrlSetState(-1, $GUI_DISABLE)	
-		$btnmultyAcc4 = GUICtrlCreateButton("#4", $x + 260, $y +15, -1, 18)
-			$txtTip = GetTranslated(17,25, "Change to Fourth Account")
+		$btnmultyAcc4 = GUICtrlCreateButton("#4", $x + 260, $y +15, 20, 18)
+			$txtTip = GetTranslated(17,25, "Switch to Fourth Account")
 			GUICtrlSetTip(-1, $txtTip)
 			GUICtrlSetOnEvent(-1, "btnmultyAcc4")
 			GUICtrlSetState(-1, $GUI_DISABLE)	
-	; IceCube (Multy-Farming Fast Switch v1.3)
+		$btnmultyDetectAcc = GUICtrlCreateButton("?", $x + 290, $y +15, 20, 18)
+			$txtTip = GetTranslated(17,26, "Detect Current Account")
+			GUICtrlSetTip(-1, $txtTip)
+			GUICtrlSetOnEvent(-1, "btnmultyDetectAcc")
+			GUICtrlSetState(-1, $GUI_ENABLE)				
+	; IceCube (Multy-Farming Revamp v1.6)
 					GUICtrlCreateGroup("", -99, -99, 1, 1)
 
 	; Android Settings
@@ -162,6 +167,16 @@ $tabMOD = GUICtrlCreateTabItem("Mods")
 			GUICtrlSetTip(-1, $txtTip)
 			GUICtrlSetOnEvent(-1, "HideTaskbar")
 		$lblHideTaskBar = GUICtrlCreateLabel("Warning: May cause erratic behaviour, uncheck if you have problems.", $x - 10, $y + 45, 340, 30, $SS_LEFT)
+			
+	; Misc Battle Settings
+	;Local $x = 35, $y = 450
+	;$grpDontEndBattle = GUICtrlCreateGroup("Miscellaneous Battle Settings", $x - 20, $y - 20, 440, 45)
+		$chkFastADBClicks = GUICtrlCreateCheckbox("Enable Fast ADB Clicks", $x + 120, $y + 20, -1, -1)
+			$txtTip = "Tick this to enable faster ADB deployment for MEmu and Droid4x in Multi-finger mode." & @CRLF & @CRLF & _ 
+				      "     WARNING:  This is experimental, if you have issues with deployment, disable it."
+			GUICtrlSetTip(-1, $txtTip)
+			GUICtrlSetOnEvent(-1, "chkFastADBClicks")
+	;GUICtrlCreateGroup("", -99, -99, 1, 1)
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
 	
 	Local $x = 35, $y = 395

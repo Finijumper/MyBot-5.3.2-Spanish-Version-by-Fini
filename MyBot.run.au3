@@ -44,13 +44,13 @@ EndIf
 #include "COCBot\MBR Global Variables.au3"
 #include "COCBot\functions\Chatbot\Chatbot.au3"
 
-$sBotVersion = "v5.3.2" ;~ Don't add more here, but below. Version can't be longer than vX.y.z because it it also use on Checkversion()
-$sBotTitle = "All In One My Bot " & $sBotVersion & " Spanish Version 0.0.3  by Fini " ;~ Don't use any non file name supported characters like \ / : * ? " < > |
+$sBotVersion = "v5.3.2 Mod" ;~ Don't add more here, but below. Version can't be longer than vX.y.z because it it also use on Checkversion()
+$sBotTitle = "MyBot " & $sBotVersion & " Todo En Uno v0.1.0 by Fini " ;~ Don't use any non file name supported characters like \ / : * ? " < > |
 
 Global $sBotTitleDefault = $sBotTitle
 
 Opt("WinTitleMatchMode", 3) ; Window Title exact match mode
-#include "COCBot\functions\Main Screen\Android.au3"
+#include "COCBot\functions\Android\Android.au3"
 
 $hMutex_MyBot = _Singleton("MyBot.run", 1)
 $OnlyInstance = $hMutex_MyBot <> 0 ; And False
@@ -164,6 +164,9 @@ LoadAmountOfResourcesImages()
 
 CheckVersion() ; check latest version on mybot.run site
 
+; Deletes any ADB files for instances no longer running
+cleanUnusedADBFiles()
+
 ;AutoStart Bot if request
 AutoStart()
 
@@ -183,24 +186,25 @@ BotClose()
 Func runBot() ;Bot that runs everything in order
 	$TotalTrainedTroops = 0
 	While 1
-		If checkSleep() And $ichkCloseNight = 1 Then
+		If checkSleep() And $RunState And $ichkCloseNight = 1 Then
 			If $debugSetLog = 1 Then SetLog("Sleep Start: " & $nextSleepStart & " - Sleep End: " & $nextSleepEnd, $COLOR_MAROON)
 			SetLog("Time to log out for sleep period...", $COLOR_GREEN)
-			CloseCOCAndWait(calculateTimeRemaining($nextSleepEnd))
+			CloseCOCAndWait(calculateTimeRemaining($nextSleepEnd), True)
 			; Set Collector counter to 11 so it collects immediately after attacking
 			$iCollectCounter = 11
 			$RandomTimer = true
 			$FirstStart = true
 			RandomAttack()
-		ElseIf $ichkLimitAttacks = 1 And $dailyAttacks >= $dailyAttackLimit Then
+		ElseIf $RunState And $ichkLimitAttacks = 1 And $dailyAttacks >= $dailyAttackLimit Then
 			If $debugSetLog = 1 Then SetLog("Attacks: " & $dailyAttacks & " - Limit: " & $dailyAttackLimit, $COLOR_MAROON)
 			SetLog("Already reached today's quota of attacks...", $COLOR_GREEN)
-			CloseCOCAndWait(calculateTimeRemaining($nextSleepEnd))
+			CloseCOCAndWait(calculateTimeRemaining($nextSleepEnd), True)
 			; Set Collector counter to 11 so it collects immediately after attacking
 			$iCollectCounter = 11
 			$RandomTimer = true
 			$FirstStart = true
 			RandomAttack()
+		ElseIf $RunState Then
 		EndIf
 		;ModBoju
 		Local $hour = StringSplit(_NowTime(4), ":", $STR_NOCOUNT)
@@ -231,10 +235,10 @@ Func runBot() ;Bot that runs everything in order
 			;EndIf
 			If $ichkMultyFarming = 1 Then DetectAccount()
 			If $RequestScreenshot = 1 Then PushMsg("RequestScreenshot")
-			; IceCube (PushBullet Revamp v1.0)
+			; IceCube (PushBullet Revamp v1.1)
 			If $RequestBuilderInfo = 1 Then PushMsg("BuilderInfo")
 			If $RequestShieldInfo = 1 Then PushMsg("ShieldInfo")
-			; IceCube (PushBullet Revamp v1.0)
+			; IceCube (PushBullet Revamp v1.1)
 			If _Sleep($iDelayRunBot3) Then Return
 			VillageReport()
 			ProfileSwitch()
@@ -368,75 +372,118 @@ Func runBot() ;Bot that runs everything in order
 			If _Sleep($iDelayRunBot5) Then Return
 			If $Restart = True Then ContinueLoop
 		EndIf
-			If $ichkMultyFarming = 1 Then
-				SetLog("Multy Farming Mode Active...", $COLOR_RED)
-				SetLog("Please don't PAUSE/STOP BOT before Change Profile", $COLOR_RED)
-				$canRequestCC = True
-				$bDonationEnabled = True
-				RequestCC()
-				$FirstStart = True
-				$RunState = True
-				$iSwCount = 0
-				If $sCurrProfile = "[01] Main" Then
+
+		; IceCube (Multy-Farming Revamp v1.6)
+		If $ichkMultyFarming = 1 Then
+			SetLog("Multy-Farming Mode Active...", $COLOR_RED)
+			SetLog("Please don't PAUSE/STOP BOT during profile change", $COLOR_RED)
+			$canRequestCC = True
+			$bDonationEnabled = True
+			RequestCC()
+			$FirstStart = True
+			$RunState = True
+			$iSwCount = 0
+			If $sCurrProfile = "[01] Main" Then
+				If IniRead($sProfilePath & "\[02] Second\config.ini", "MOD", "MultyFarming", "0") = "1" Then
 					SwitchAccount("Second")
-				ElseIf $sCurrProfile = "[02] Second" Then
-					If $iAccount = "3" Or $iAccount = "4" Then
+				ElseIf IniRead($sProfilePath & "\[03] Third\config.ini", "MOD", "MultyFarming", "0") = "1" Then
+					SwitchAccount("Third")
+				ElseIf IniRead($sProfilePath & "\[04] Fourth\config.ini", "MOD", "MultyFarming", "0") = "1" Then
+					SwitchAccount("Fourth")
+				Else
+					SetLog("You don't have other profiles configured for multy-farming. Swithing accounts canceled.", $COLOR_RED)
+				EndIF
+
+			ElseIf $sCurrProfile = "[02] Second" Then
+				If $iAccount = "3" Or $iAccount = "4" Then
+					If IniRead($sProfilePath & "\[03] Third\config.ini", "MOD", "MultyFarming", "0") = "1" Then
 						SwitchAccount("Third")
-;
-					Else
-						SwitchAccount("Main")
-
-					EndIf
-				ElseIf $sCurrProfile = "[03] Third" Then
-					If $iAccount = "4" Then
+					ElseIf IniRead($sProfilePath & "\[04] Fourth\config.ini", "MOD", "MultyFarming", "0") = "1" Then
 						SwitchAccount("Fourth")
-
-					ElseIf $iAccount = "3" Then
+					ElseIf IniRead($sProfilePath & "\[01] Main\config.ini", "MOD", "MultyFarming", "0") = "1" Then
 						SwitchAccount("Main")
-;
+					Else
+						SetLog("You don't have other profiles configured for multy-farming. Swithing accounts canceled.", $COLOR_RED)
+					EndIF
+				Else
+					If IniRead($sProfilePath & "\[01] Main\config.ini", "MOD", "MultyFarming", "0") = "1" Then
+						SwitchAccount("Main")
+					EndIF
+				EndIf
+
+			ElseIf $sCurrProfile = "[03] Third" Then
+				If $iAccount = "4" Then
+					If IniRead($sProfilePath & "\[04] Fourth\config.ini", "MOD", "MultyFarming", "0") = "1" Then
+						SwitchAccount("Fourth")
+					ElseIf IniRead($sProfilePath & "\[01] Main\config.ini", "MOD", "MultyFarming", "0") = "1" Then
+						SwitchAccount("Main")
+					ElseIf IniRead($sProfilePath & "\[02] Second\config.ini", "MOD", "MultyFarming", "0") = "1" Then
+						SwitchAccount("Second")
+					Else
+						SetLog("You don't have other profiles configured for multy-farming. Swithing accounts canceled.", $COLOR_RED)
 					EndIf
-				ElseIf $sCurrProfile = "[04] Fourth" Then
+
+				ElseIf $iAccount = "3" Then
+					If IniRead($sProfilePath & "\[01] Main\config.ini", "MOD", "MultyFarming", "0") = "1" Then
+						SwitchAccount("Main")
+					EndIF
+
+				EndIf
+			ElseIf $sCurrProfile = "[04] Fourth" Then
+				If IniRead($sProfilePath & "\[01] Main\config.ini", "MOD", "MultyFarming", "0") = "1" Then
 					SwitchAccount("Main")
-;
+				ElseIf IniRead($sProfilePath & "\[02] Second\config.ini", "MOD", "MultyFarming", "0") = "1" Then
+					SwitchAccount("Second")
+				ElseIf IniRead($sProfilePath & "\[03] Third\config.ini", "MOD", "MultyFarming", "0") = "1" Then
+					SwitchAccount("Third")
+				Else
+					SetLog("You don't have other profiles configured for multy-farming. Swithing accounts canceled.", $COLOR_RED)
 				EndIf
 			EndIf
+		EndIf
+		; IceCube (Multy-Farming Revamp v1.6)
 	WEnd
 EndFunc   ;==>runBot
 
 Func Idle() ;Sequence that runs until Full Army
 	Local $TimeIdle = 0 ;In Seconds
+	Local $hTimer, $iReHere
+
 	;If $debugsetlog = 1 Then SetLog("Func Idle ", $COLOR_PURPLE)
 	While $fullArmy = False Or $bFullArmyHero = False
-		If checkSleep() And $ichkCloseNight = 1 Then
+		If checkSleep() And $RunState And $ichkCloseNight = 1 Then
 			If $debugSetLog = 1 Then SetLog("Sleep Start: " & $nextSleepStart & " - Sleep End: " & $nextSleepEnd, $COLOR_MAROON)
 			SetLog("Time to log out for sleep period...", $COLOR_GREEN)
-			CloseCOCAndWait(calculateTimeRemaining($nextSleepEnd))
+			CloseCOCAndWait(calculateTimeRemaining($nextSleepEnd), True)
 			; Set Collector counter to 11 so it collects immediately after attacking
 			$iCollectCounter = 11
 			$RandomTimer = true
 			$FirstStart = true
 			RandomAttack()
-		ElseIf $ichkLimitAttacks = 1 And $dailyAttacks >= $dailyAttackLimit Then
+		ElseIf $RunState And $ichkLimitAttacks = 1 And $dailyAttacks >= $dailyAttackLimit Then
 			If $debugSetLog = 1 Then SetLog("Attacks: " & $dailyAttacks & " - Limit: " & $dailyAttackLimit, $COLOR_MAROON)
 			SetLog("Already reached today's quota of attacks...", $COLOR_GREEN)
-			CloseCOCAndWait(calculateTimeRemaining($nextSleepEnd))
+			CloseCOCAndWait(calculateTimeRemaining($nextSleepEnd), True)
 			; Set Collector counter to 11 so it collects immediately after attacking
 			$iCollectCounter = 11
 			$RandomTimer = true
 			$FirstStart = true
 			RandomAttack()
+		ElseIf $RunState Then
 		EndIf
 		checkAndroidTimeLag()
 
 		If $RequestScreenshot = 1 Then PushMsg("RequestScreenshot")
-		; IceCube (PushBullet Revamp v1.0)
+		; IceCube (PushBullet Revamp v1.1)
 		If $RequestBuilderInfo = 1 Then PushMsg("BuilderInfo")
 		If $RequestShieldInfo = 1 Then PushMsg("ShieldInfo")
-		; IceCube (PushBullet Revamp v1.0)
+		; IceCube (PushBullet Revamp v1.1)
 		If _Sleep($iDelayIdle1) Then Return
 		If $CommandStop = -1 Then SetLog("====== Waiting for full army ======", $COLOR_GREEN)
-		Local $hTimer = TimerInit()
-		Local $iReHere = 0
+
+			$hTimer = TimerInit()
+
+			$iReHere = 0
 		While $iReHere < 7
 			$iReHere += 1
 			DonateCC(True)
@@ -504,6 +551,7 @@ Func Idle() ;Sequence that runs until Full Army
 
 		If $canRequestCC = True Then RequestCC()
 
+			$TimeIdle += Round(TimerDiff($hTimer) / 1000, 2) ; In Seconds
 		SetLog("Time Idle: " & StringFormat("%02i", Floor(Floor($TimeIdle / 60) / 60)) & ":" & StringFormat("%02i", Floor(Mod(Floor($TimeIdle / 60), 60))) & ":" & StringFormat("%02i", Floor(Mod($TimeIdle, 60))))
 
 		If $OutOfGold = 1 Or $OutOfElixir = 1 Then Return  ; Halt mode due low resources, only 1 idle loop
@@ -540,6 +588,10 @@ Func AttackMain() ;Main control for attack functions
 				Setlog("Heroes not ready for dead base attack, return to wait!", $COLOR_BLUE)
 				Return
 			EndIf
+			If ($iWaitForSpells = 1 And $iTotalSpellSpace < $iTotalCountSpell) Then
+				Setlog("Spells not ready for attack, return to wait!", $COLOR_BLUE)
+				Return
+			 EndIf
 		Case 1  ; Live base
 			If (BitAND($iHeroAttack[$LB], $iHeroWait[$LB], $iHeroAvailable) <> $iHeroWait[$LB]) And _
 				($OptBullyMode = 0 Or ($OptBullyMode = 1 And (BitAND($iHeroAttack[$iTHBullyAttackMode], $iHeroWait[$iTHBullyAttackMode], $iHeroAvailable) <> $iHeroWait[$iTHBullyAttackMode]))) And _
@@ -547,6 +599,10 @@ Func AttackMain() ;Main control for attack functions
 				Setlog("Heroes not ready for live base attack, return to wait!", $COLOR_BLUE)
 				Return
 			EndIf
+			If ($iWaitForSpells = 1 And $iTotalSpellSpace < $iTotalCountSpell) Then
+				Setlog("Spells not ready for attack, return to wait!", $COLOR_BLUE)
+				Return
+			 EndIf
 		Case 2 ; Both Dead and Live bases
 			If (BitAND($iHeroAttack[$DB], $iHeroWait[$DB], $iHeroAvailable) <> $iHeroWait[$DB]) And _
 				(BitAND($iHeroAttack[$LB], $iHeroWait[$LB], $iHeroAvailable) <> $iHeroWait[$LB]) And _
@@ -555,6 +611,10 @@ Func AttackMain() ;Main control for attack functions
 				Setlog("Heroes not ready for attack, return to wait!", $COLOR_BLUE)
 				Return
 			EndIf
+			If ($iWaitForSpells = 1 And $iTotalSpellSpace < $iTotalCountSpell) Then
+				Setlog("Spells not ready for attack, return to wait!", $COLOR_BLUE)
+				Return
+			 EndIf
 	EndSwitch
 	PrepareSearch()
 		If $OutOfGold = 1 Then Return ; Check flag for enough gold to search

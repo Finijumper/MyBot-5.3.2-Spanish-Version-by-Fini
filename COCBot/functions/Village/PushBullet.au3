@@ -66,12 +66,18 @@ Func _RemoteControl()
 				$body[$x] = StringUpper(StringStripWS($body[$x], $STR_STRIPLEADING + $STR_STRIPTRAILING + $STR_STRIPSPACES))
 				$iden[$x] = StringStripWS($iden[$x], $STR_STRIPLEADING + $STR_STRIPTRAILING + $STR_STRIPSPACES)
 
+				; IceCube (PushBullet Revamp v1.1)
+				$iForceNotify = 1
+				; IceCube (PushBullet Revamp v1.1)
+
 				Switch $body[$x]
 					Case "BOT HELP"
 						Local $txtHelp = "You can remotely control your bot sending commands following this syntax:"
 						$txtHelp &= '\n' & "BOT HELP - send this help message"
 						$txtHelp &= '\n' & "BOT DELETE  - delete all your previous Push message"
-						$txtHelp &= '\n' & "BOT <Village Name> RESTART - restart the bot named <Village Name> and bluestacks"
+						; IceCube (PushBullet Revamp v1.1)
+						$txtHelp &= '\n' & "BOT <Village Name> RESTART - restart the bot named <Village Name> and emulator"
+						; IceCube (PushBullet Revamp v1.1)
 						$txtHelp &= '\n' & "BOT <Village Name> STOP - stop the bot named <Village Name>"
 						$txtHelp &= '\n' & "BOT <Village Name> PAUSE - pause the bot named <Village Name>"
 						$txtHelp &= '\n' & "BOT <Village Name> RESUME   - resume the bot named <Village Name>"
@@ -79,13 +85,13 @@ Func _RemoteControl()
 						$txtHelp &= '\n' & "BOT <Village Name> LOG - send the current log file of <Village Name>"
 						$txtHelp &= '\n' & "BOT <Village Name> LASTRAID - send the last raid loot screenshot of <Village Name>"
 						$txtHelp &= '\n' & "BOT <Village Name> LASTRAIDTXT - send the last raid loot values of <Village Name>"
-						; IceCube (PushBullet Revamp v1.0)	
+						; IceCube (PushBullet Revamp v1.1)	
 						$txtHelp &= '\n' & "BOT <Village Name> SCREENSHOT - send a screenshot of <Village Name>"
 						$txtHelp &= '\n' & "BOT <Village Name> SCREENSHOTHD - send a screenshot in high resolution of <Village Name>"
 						$txtHelp &= '\n' & "BOT <Village Name> BUILDER - send a screenshot of builder status of <Village Name>"
 						$txtHelp &= '\n' & "BOT <Village Name> SHIELD - send a screenshot of shield status of <Village Name>"
-						$txtHelp &= '\n' & "BOT <Village Name> GAIN - send a top gain & zap statistics of <Village Name>"
-						; IceCube (PushBullet Revamp v1.0)	
+						$txtHelp &= '\n' & "BOT <Village Name> TOP - send a top gain & zap statistics of <Village Name>"
+						; IceCube (PushBullet Revamp v1.1)	
 						$txtHelp &= '\n' & "BOT <Village Name> SENDCHAT <TEXT> - send TEXT in clan chat of <Village Name>"
 						$txtHelp &= '\n' & "BOT <Village Name> GETCHATS <STOP|NOW|INTERVAL> - select any of this three option to do"
 						$txtHelp &= '\n' & "BOT <Village Name> START - start the bot named <Village Name>"
@@ -183,7 +189,7 @@ Func _RemoteControl()
 						SetLog("Pushbullet: ScreenShot request received", $COLOR_GREEN)
 						$RequestScreenshot = 1
 						_DeleteMessage($iden[$x])
-					; IceCube (PushBullet Revamp v1.0)	
+					; IceCube (PushBullet Revamp v1.1)	
 					Case "BOT " & StringUpper($iOrigPushB) & " SCREENSHOTHD"
 						SetLog("Pushbullet: ScreenShot HD request received", $COLOR_GREEN)
 						$RequestScreenshot = 1
@@ -197,14 +203,14 @@ Func _RemoteControl()
 						SetLog("Pushbullet: Shield Status request received", $COLOR_GREEN)
 						$RequestShieldInfo = 1
 						_DeleteMessage($iden[$x])
-					Case "BOT " & StringUpper($iOrigPushB) & " GAIN"									
+					Case "BOT " & StringUpper($iOrigPushB) & " TOP"									
 						SetLog("Pushbullet: Your request has been received. Top Gain & Zap Statistics sent", $COLOR_GREEN)
 						Local $txtStats = " | Top Gain & Zap Stats Village Report" & "\n" & "\n[G]: " & _NumberFormat($topgoldloot) & "\n[E]: "
 							  $txtStats &= _NumberFormat($topelixirloot) & "\n[D]: " & _NumberFormat($topdarkloot) & "\n[T]: " & $toptrophyloot
 							  $txtStats &= "\n[Z]: " & _NumberFormat($smartZapGain) & "\n[S]: " & _NumberFormat($numLSpellsUsed)
 						_Push($iOrigPushB & $txtStats)
 						_DeleteMessage($iden[$x])
-						; IceCube (PushBullet Revamp v1.0)	
+					; IceCube (PushBullet Revamp v1.1)	
 					Case "BOT " & StringUpper($iOrigPushB) & " RESTART"
 						_DeleteMessage($iden[$x])
 						SetLog("Your request has been received. Bot and BS restarting...", $COLOR_GREEN)
@@ -450,12 +456,19 @@ Func _RemoteControl()
 			local $body2 = _StringProper(StringStripWS($lastmessage, $STR_STRIPLEADING + $STR_STRIPTRAILING + $STR_STRIPSPACES)) ;upercase & remove space laset message
 			If $lastremote <> $lastuid Then
 				$lastremote = $lastuid
+
+				; IceCube (PushBullet Revamp v1.1)
+				$iForceNotify = 1
+				; IceCube (PushBullet Revamp v1.1)
+
 				Switch $body2
 					Case GetTranslated(18,2,"Help") & "\n\u2753"
 						Local $txtHelp =  GetTranslated(18,17,"You can remotely control your bot by selecting this key")
 						$txtHelp &= "\n" & GetTranslated(18,18,"HELP - send this help message")
 						$txtHelp &= "\n" & GetTranslated(18,19,"DELETE  - Use this if Remote dont respond to your request")
-						$txtHelp &= "\n" & GetTranslated(18,20,"RESTART - restart the bot and bluestacks")
+						; IceCube (PushBullet Revamp v1.1)
+						$txtHelp &= "\n" & GetTranslated(18,20,"RESTART - restart the bot and emulator")
+						; IceCube (PushBullet Revamp v1.1)
 						$txtHelp &= "\n" & GetTranslated(18,21,"STOP - stop the bot")
 						$txtHelp &= "\n" & GetTranslated(18,22,"PAUSE - pause the bot")
 						$txtHelp &= "\n" & GetTranslated(18,23,"RESUME   - resume the bot")
@@ -463,7 +476,9 @@ Func _RemoteControl()
 						$txtHelp &= "\n" & GetTranslated(18,102,"LOG - send the Bot log file")
 						$txtHelp &= "\n" & GetTranslated(18,25,"LASTRAID - send the last raid loot screenshot. you should check Take Loot snapshot in End Battle Tab ")
 						$txtHelp &= "\n" & GetTranslated(18,26,"LASTRAIDTXT - send the last raid loot values")
-						$txtHelp &= "\n" & GetTranslated(18,27,"SCREENSHOT - send a screenshot")
+						; IceCube (PushBullet Revamp v1.1)
+						$txtHelp &= "\n" & GetTranslated(18,27,"SCREENSHOT - send a screenshot in high resolution")
+						; IceCube (PushBullet Revamp v1.1)
 						$txtHelp &= "\n" & GetTranslated(18,28,"POWER - select power option")
 						$txtHelp &= "\n" & GetTranslated(18,104,"RESETSTATS - reset Village Statistics")
 						$txtHelp &= "\n" & GetTranslated(18,105,"DONATEON <TROOPNAME> <QUANTITY> - turn on donate for troop & quantity")
@@ -513,7 +528,7 @@ Func _RemoteControl()
 					Case GetTranslated(18,6,"Power") & "\n\ud83d\udda5"
 						SetLog("Telegram: Your request has been received from " & $iOrigPushB & ". POWER option now sent", $COLOR_GREEN)
 						$oHTTP2.Open("Post", "https://api.telegram.org/bot"&$access_token2&"/sendmessage", False)
-						$oHTTP2.SetRequestHeader("Content-Type", "application/json")
+						$oHTTP2.SetRequestHeader("Content-Type", "application/json; charset=ISO-8859-1,utf-8")
 						local $pPush3 = '{"text": "' & GetTranslated(18,49,"select POWER option") & '", "chat_id":' & $chat_id2 &', "reply_markup": {"keyboard": [["'&GetTranslated(18,7,"Hibernate")&'\n\u26a0\ufe0f","'&GetTranslated(18,8,"Shut down")&'\n\u26a0\ufe0f","'&GetTranslated(18,9,"Standby")&'\n\u26a0\ufe0f"],["'&GetTranslated(18,10,"Cancel")&'"]],"one_time_keyboard": true,"resize_keyboard":true}}'
 						$oHTTP2.Send($pPush3)
 					Case GetTranslated(18,7,"Hibernate") & "\n\u26a0\ufe0f"
@@ -568,6 +583,9 @@ Func _RemoteControl()
 					Case GetTranslated(18,14,"Screenshot") & "\n\ud83c\udfa6"
 						SetLog("Telegram: ScreenShot request received", $COLOR_GREEN)
 						$RequestScreenshot = 1
+						; IceCube (PushBullet Revamp v1.1)	
+						$RequestScreenshotHD = 1
+						; IceCube (PushBullet Revamp v1.1)	
 					Case GetTranslated(18,15,"Restart") & "\n\u21aa"
 						SetLog("Telegram: Your request has been received. Bot and BS restarting...", $COLOR_GREEN)
 						_Push($iOrigPushB & " | " & GetTranslated(18,41,"Request to Restart...") & "\n" & GetTranslated(18,42,"Your bot and BS are now restarting..."))
@@ -777,6 +795,31 @@ EndFunc   ;==>_RemoteControl
 
 Func _PushBullet($pMessage = "")
     If ($pEnabled = 0 and $pEnabled2 = 0)  Or ($PushToken = "" and $PushToken2 = "") Then Return
+	
+	; IceCube (Multy-Farming Revamp v1.6)
+	If $iForceNotify = 0 Then
+		If $iPlannedNotifyWeekdaysEnable = 1 Then
+			If $iPlannedNotifyWeekdays[@WDAY - 1] = 1 Then
+			If $iPlannedNotifyHoursEnable = 1 Then
+				Local $hour = StringSplit(_NowTime(4), ":", $STR_NOCOUNT)
+				If $iPlannedNotifyHours[$hour[0]] = 0 Then
+					SetLog("Notify not planned for this hour, Skipped..", $COLOR_ORANGE)
+					SetLog($pMessage, $COLOR_ORANGE)
+					Return ; exit func if no planned  
+				EndIf
+			EndIf
+			Else
+				SetLog("Notify not planned to: " & _DateDayOfWeek(@WDAY), $COLOR_ORANGE)
+				SetLog($pMessage, $COLOR_ORANGE)
+				Return ; exit func if not planned  
+			EndIf
+		EndIf
+	EndIf	
+	
+	$iForceNotify = 0
+	; IceCube (Multy-Farming Revamp v1.6)
+
+	
     If $pEnabled = 1 Then
 		$oHTTP = ObjCreate("WinHTTP.WinHTTPRequest.5.1")
 		$access_token = $PushToken
@@ -805,7 +848,7 @@ Func _PushBullet($pMessage = "")
 		 local $chat_id = _StringBetween($Result, 'm":{"id":', ',"f')
 		 $chat_id2 = _Arraypop($chat_id)
 		 $oHTTP2.Open("Post", "https://api.telegram.org/bot" & $access_token2&"/sendmessage", False)
-		 $oHTTP2.SetRequestHeader("Content-Type", "application/json")
+		 $oHTTP2.SetRequestHeader("Content-Type", "application/json; charset=ISO-8859-1,utf-8")
 	     Local $Date = @YEAR & '-' & @MON & '-' & @MDAY
 		 Local $Time = @HOUR & '.' & @MIN
 		 local $pPush3 = '{"text":"' & $pmessage & '\n' & $Date & '__' & $Time & '", "chat_id":' & $chat_id2 & '}}'
@@ -815,6 +858,30 @@ EndFunc   ;==>_PushBullet
 
 Func _Push($pMessage)
     If ($pEnabled = 0 and $pEnabled2 = 0)  Or ($PushToken = "" and $PushToken2 = "") Then Return
+	
+	; IceCube (Multy-Farming Revamp v1.6)
+	If $iForceNotify = 0 Then
+		If $iPlannedNotifyWeekdaysEnable = 1 Then
+			If $iPlannedNotifyWeekdays[@WDAY - 1] = 1 Then
+			If $iPlannedNotifyHoursEnable = 1 Then
+				Local $hour = StringSplit(_NowTime(4), ":", $STR_NOCOUNT)
+				If $iPlannedNotifyHours[$hour[0]] = 0 Then
+					SetLog("Notify not planned for this hour, Skipped..", $COLOR_ORANGE)
+					SetLog($pMessage, $COLOR_ORANGE)
+					Return ; exit func if no planned  
+				EndIf
+			EndIf
+			Else
+				SetLog("Notify not planned to: " & _DateDayOfWeek(@WDAY), $COLOR_ORANGE)
+				SetLog($pMessage, $COLOR_ORANGE)
+				Return ; exit func if not planned  
+			EndIf
+		EndIf
+	EndIf	
+	
+	$iForceNotify = 0
+	; IceCube (Multy-Farming Revamp v1.6)
+	
 	If $pEnabled = 1 Then
 		$oHTTP = ObjCreate("WinHTTP.WinHTTPRequest.5.1")
 		$access_token = $PushToken
@@ -831,7 +898,7 @@ Func _Push($pMessage)
 	   $oHTTP2 = ObjCreate("WinHTTP.WinHTTPRequest.5.1")
 	   $url= "https://api.telegram.org/bot"
 	   $oHTTP2.Open("Post",  $url & $access_token2 & "/sendMessage", False)
-	   $oHTTP2.SetRequestHeader("Content-Type", "application/json")
+	   $oHTTP2.SetRequestHeader("Content-Type", "application/json; charset=ISO-8859-1,utf-8")
 	   Local $Date = @YEAR & '-' & @MON & '-' & @MDAY
 	   Local $Time = @HOUR & '.' & @MIN
 	   local $pPush3 = '{"text":"' & $pmessage & '\n' & $Date & '__' & $Time & '", "chat_id":' & $chat_id2 & '}}'
@@ -898,7 +965,7 @@ EndFunc
 Func Getchatid($msgtitle)
 
 	$oHTTP2.Open("Post", "https://api.telegram.org/bot"&$access_token2&"/sendmessage", False)
-	$oHTTP2.SetRequestHeader("Content-Type", "application/json")
+	$oHTTP2.SetRequestHeader("Content-Type", "application/json; charset=ISO-8859-1,utf-8")
 
 	local $pPush3 = '{"text": "' & $msgtitle & '", "chat_id":' & $chat_id2 &', "reply_markup": {"keyboard": [["' & GetTranslated(18,16,"Stop") _
 	& '\n\u23f9","' & GetTranslated(18,3,"Pause") & '\n\u2016","' & GetTranslated(18,15,"Restart") & '\n\u21aa","' & GetTranslated(18,4,"Resume") & '\n\u25b6"],["' _
@@ -960,7 +1027,7 @@ Func _PushFile($File, $Folder, $FileType, $body)
 			Local $telegram_url = "https://api.telegram.org/bot" & $access_token2 & "/sendPhoto"
 			$Result = RunWait($pCurl & " -i -X POST " & $telegram_url & ' -F chat_id="' & $chat_id2 &' " -F photo=@"' & $sProfilePath & "\" & $sCurrProfile & '\' & $Folder & '\' & $File  & '"', "", @SW_HIDE)
 			$oHTTP2.Open("Post", "https://api.telegram.org/bot" & $access_token2 & "/sendPhoto", False)
-			$oHTTP2.SetRequestHeader("Content-Type", "application/json")
+			$oHTTP2.SetRequestHeader("Content-Type", "application/json; charset=ISO-8859-1,utf-8")
 			Local $pPush = '{"type": "file", "file_name": "' & $File & '", "file_type": "' & $FileType & '", "file_url": "' & $telegram_url & '", "body": "' & $body & '"}'
 			$oHTTP2.Send($pPush)
 		Else
@@ -977,7 +1044,7 @@ Func _PushFile2($File, $Folder, $FileType, $body)
 		Local $telegram_url = "https://api.telegram.org/bot" & $access_token2 & "/SendDocument"
 		$Result = RunWait($pCurl & " -i -X POST " & $telegram_url & ' -F chat_id="' & $chat_id2 &' " -F document=@"' & $sProfilePath & "\" & $sCurrProfile & '\' & $Folder & '\' & $File & '";filename="' & StringTrimRight($File, 3) & 'txt"', "", @SW_HIDE)
 		$oHTTP2.Open("Post", $telegram_url, False)
-		$oHTTP2.SetRequestHeader("Content-Type", "application/json")
+		$oHTTP2.SetRequestHeader("Content-Type", "application/json; charset=ISO-8859-1,utf-8")
 		Local $pPush2 = '{"type": "file", "file_name": "' & $File & '", "file_type": "' & $FileType & '", "file_url": "' & $telegram_url & '"}'
 		$oHTTP2.Send($pPush2)
 	 Else
@@ -1094,22 +1161,22 @@ Func PushMsg($Message, $Source = "")
 			Local $Date = @YEAR & "-" & @MON & "-" & @MDAY
 			Local $Time = @HOUR & "." & @MIN
 			_CaptureRegion(0, 0, $DEFAULT_WIDTH, $DEFAULT_HEIGHT - 45)
-			; IceCube (PushBullet Revamp v1.0)	
+			; IceCube (PushBullet Revamp v1.1)	
 			If $RequestScreenshotHD = 1 Then
 				$hBitmap_Scaled = $hBitmap
 			Else
 			$hBitmap_Scaled = _GDIPlus_ImageResize($hBitmap, _GDIPlus_ImageGetWidth($hBitmap) / 2, _GDIPlus_ImageGetHeight($hBitmap) / 2) ;resize image
 			EndIf
-			; IceCube (PushBullet Revamp v1.0)	
+			; IceCube (PushBullet Revamp v1.1)	
 			Local $Screnshotfilename = "Screenshot_" & $Date & "_" & $Time & ".jpg"
 			_GDIPlus_ImageSaveToFile($hBitmap_Scaled, $dirTemp & $Screnshotfilename)
 			_GDIPlus_ImageDispose($hBitmap_Scaled)
 			_PushFile($Screnshotfilename, "Temp", "image/jpeg", $iOrigPushB & " | " &  GetTranslated(18,91,"Screenshot of your village") & "\n" & $Screnshotfilename)
 			SetLog("Pushbullet/Telegram: Screenshot sent!", $COLOR_GREEN)
 			$RequestScreenshot = 0
-			; IceCube (PushBullet Revamp v1.0)	
+			; IceCube (PushBullet Revamp v1.1)	
 			$RequestScreenshotHD = 0
-			; IceCube (PushBullet Revamp v1.0)	
+			; IceCube (PushBullet Revamp v1.1)	
 			;wait a second and then delete the file
 			If _Sleep($iDelayPushMsg2) Then Return
 			Local $iDelete = FileDelete($dirTemp & $Screnshotfilename)
@@ -1138,7 +1205,7 @@ Func PushMsg($Message, $Source = "")
 					$iReportIdleBuilder = 0
 				EndIf
 			EndIf
-		; IceCube (PushBullet Revamp v1.0)
+		; IceCube (PushBullet Revamp v1.1)
 		Case "BuilderInfo"
 			Click(0,0, 5)
 			Click(274,8)
@@ -1173,7 +1240,7 @@ Func PushMsg($Message, $Source = "")
 			Local $iDelete = FileDelete($dirTemp & $Screnshotfilename)
 			If Not ($iDelete) Then SetLog("Pushbullet/Telegram: An error occurred deleting the temporary screenshot file.", $COLOR_RED)
 			Click(0,0, 5)
-			; IceCube (PushBullet Revamp v1.0)
+			; IceCube (PushBullet Revamp v1.1)
 	EndSwitch
 
 EndFunc   ;==>PushMsg

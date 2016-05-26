@@ -558,8 +558,16 @@ $itxtTreasuryGold = iniRead($config,"other","treasuryGold","0000")
 		$ichkDeleteOldPushes = IniRead($config, "pushbullet", "DeleteOldPushes", "0")
 		$ichkAlertPBCampFull = IniRead($config, "pushbullet", "AlertCampFull", "0")
 		$ichkAlertBuilderIdle = IniRead($config, "pushbullet", "AlertBuilderIdle", "0")
-
-
+		; IceCube (PushBullet Revamp v1.1)
+		;Remote Control
+		$pAlertTopGain = IniRead($config, "pushbullet", "AlertTopGain", "0")
+		$pAlertMFSwitch = IniRead($config, "pushbullet", "AlertMFSwitch", "0")
+		;Scheduler		
+		$iPlannedNotifyWeekDaysEnable = IniRead($config, "pushbullet", "NotifyWeekDaysEnable", "0")
+		$iPlannedNotifyWeekDays = StringSplit(IniRead($config, "pushbullet", "NotifyWeekDays", "1|1|1|1|1|1|1"),"|", $STR_NOCOUNT)
+		$iPlannedNotifyHoursEnable = IniRead($config, "pushbullet", "NotifyHoursEnable", "0")
+		$iPlannedNotifyHours = StringSplit(IniRead($config, "pushbullet", "NotifyHours", "1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1"),"|", $STR_NOCOUNT)
+		; IceCube (PushBullet Revamp v1.1)
 
 		$ichkDeleteLogs = IniRead($config, "deletefiles", "DeleteLogs", "0")
 		$iDeleteLogsDays = IniRead($config, "deletefiles", "DeleteLogsDays", "7")
@@ -692,6 +700,9 @@ $itxtTreasuryGold = iniRead($config,"other","treasuryGold","0000")
 ;~ 		$MilkFarmAlgorithmTh = IniRead($config,"MilkingAttack","TownHallAlgorithm","Bam")
 ;~ 		$MilkFarmSnipeEvenIfNoExtractorsFound = IniRead($config,"MilkingAttack","TownHallHitAnyway","1")
 
+		;Wait For Spells
+		$iWaitForSpells = IniRead($config, "troop", "WaitForSpells", "0")
+	
 	;Profile Switch
 	$ichkGoldSwitchMax = IniRead($config, "profiles", "chkGoldSwitchMax", "0")
 	$icmbGoldMaxProfile = IniRead($config, "profiles", "cmbGoldMaxProfile", "0")
@@ -731,6 +742,9 @@ $itxtTreasuryGold = iniRead($config,"other","treasuryGold","0000")
 		$useAllSides = Number(IniRead($config, "SaveTroops", "ChangeAllSides", "1"))
 		$percentCollectors = Number(IniRead($config, "SaveTroops", "PercentCollectors", "80"))
 		$redlineDistance = Number(IniRead($config, "SaveTroops", "MaxDistance", "50"))
+
+		; Misc Battle Settings - Added by LunaEclipse
+		$AndroidAdbClicksEnabled = IniRead($config, "Fast Clicks", "UseADBFastClicks", "0")
 
 		; Custom Deployment Settings - Added by LunaEclipse
 		$deployValues = deployStringToArray(IniRead($config, "Custom Deployment", "Deployment", ""))

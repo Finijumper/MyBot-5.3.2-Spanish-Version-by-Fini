@@ -19,7 +19,7 @@ Func CheckVersion()
 		If $lastversion = "" Then
 			SetLog("WE CANNOT OBTAIN PRODUCT VERSION AT THIS TIME", $COLOR_ORANGE)
 		ElseIf VersionNumFromVersionTXT($sBotVersion) < VersionNumFromVersionTXT($lastversion) Then
-			SetLog("WARNING, YOUR BOT VERSION (" & $sBotVersion & ") IS OUT OF DATE.", $COLOR_RED)
+			SetLog("ALERTA, TU VERSIÓN DEL BOT  (" & $sBotVersion & ") ESTÁ DESACTUALIZADA.", $COLOR_RED)
 			SetLog("PLEASE DOWNLOAD THE LATEST(" & $lastversion & ") FROM https://MyBot.run               ", $COLOR_RED)
 			SetLog(" ")
 			_PrintLogVersion($oldversmessage)
@@ -29,39 +29,14 @@ Func CheckVersion()
 			SetLog("OFFICIAL VERSION: " & $lastversion, $COLOR_GREEN)
 			SetLog(" ")
 		Else
-			SetLog("WELCOME CHIEF, YOU HAVE THE LATEST VERSION OF THE BOT", $COLOR_GREEN)
+			SetLog("BIENVENIDO, TIENES LA ÚLTIMA VERSIÓN DEL BOT", $COLOR_GREEN)
 			SetLog(" ")
 			_PrintLogVersion($lastmessage)
 		EndIf
+
+		CheckMODVersion()
 	EndIf
 EndFunc   ;==>CheckVersion
-
-;~ Func CheckVersionTXT()
-;~ 	;download page from site contains last bot version
-;~ 	$hLastVersion = InetGet("https://mybot.run/lastversion.txt", @ScriptDir & "\LastVersion.txt")
-;~ 	InetClose($hLastVersion)
-
-;~ 	;search version into downloaded page
-;~ 	Local $f, $line, $Casesense = 0
-;~ 	$lastversion = ""
-;~ 	If FileExists(@ScriptDir & "\LastVersion.txt") Then
-;~ 		$f = FileOpen(@ScriptDir & "\LastVersion.txt", 0)
-;~ 		; Read in lines of text until the EOF is reached
-;~ 		While 1
-;~ 			$line = FileReadLine($f)
-;~ 			If @error = -1 Then ExitLoop
-;~ 			If StringInStr($line, "version=", $Casesense) Then
-;~ 				$lastversion = StringMid($line, 9, -1)
-;~ 			EndIf
-;~ 			If StringInStr($line, "message=", $Casesense) Then
-;~ 				$lastmessage = StringMid($line, 9, -1)
-;~ 			EndIf
-;~ 		WEnd
-;~ 		FileClose($f)
-;~ 		FileDelete(@ScriptDir & "\LastVersion.txt")
-;~ 	EndIf
-;~ EndFunc   ;==>CheckVersionTXT
-
 
 Func CheckVersionHTML()
 	Local $versionfile = @ScriptDir & "\LastVersion.txt"
@@ -119,6 +94,43 @@ Func CheckVersionHTML()
 	EndIf
 EndFunc   ;==>CheckVersionHTML
 
+Func CheckMODVersion()
+	Local $botFile = @ScriptDir & "\MyBot.run.exe"
+	Local $lastModified, $lastPushed, $lastPushedDatetime, $LatestVersion
+	If FileExists($botFile) Then
+		$lastModified = FileGetTime($botFile, $FT_MODIFIED, $FT_STRING)
+	EndIf
+
+	Local $tempJson = @ScriptDir & "\Temp.json"
+	$hDownload = InetGet("https://api.github.com/repos/amintalkin/Merged-MyBot-5.3.2-AIO-v1.3.5-B25", $tempJson, 0, 1)
+	; Wait for the download to complete by monitoring when the 2nd index value of InetGetInfo returns True.
+	Local $i = 0
+	Do
+		Sleep($iDelayCheckVersionHTML1)
+		$i += 1
+	Until InetGetInfo($hDownload, $INET_DOWNLOADCOMPLETE) or $i > 25
+	InetClose($hDownload)
+
+	Local $file = FileOpen($tempJson, 0)
+	Local $fileContent = FileRead($file)
+	Local $decodedArray = _JSONDecode($fileContent)
+	For $i = 0 To Ubound($decodedArray) - 1
+		If $decodedArray[$i][0] = "name" Then
+			$LatestVersion = $decodedArray[$i][1]
+			ExitLoop
+		EndIf
+	Next
+	FileClose($file)
+	FileDelete($tempJson)
+
+ 		If $LatestVersion <> $LatestVersionExpected Then ; check if last modified timestamp of local bot is within 5 mins of latest upload timestamp
+			MsgBox(0, "", "A New Version Of Mod AIO Has Been Uploaded (" & $LatestVersion & "), Your Version Might Be Outdated." & @CRLF & _
+			"Check And Download Latest Version From Help Menu")
+			Return False
+		EndIf
+ 
+	Return True
+EndFunc
 
 Func VersionNumFromVersionTXT($versionTXT)
 	; remove all after a space from $versionTXT, example "v.4.0.1 MOD" ==> "v.4.0.1"
@@ -144,10 +156,6 @@ Func VersionNumFromVersionTXT($versionTXT)
 	EndIf
 	Return $resultnumber
 EndFunc   ;==>VersionNumFromVersionTXT
-
-
-
-
 
 Func _PrintLogVersion($message)
 	Local $messagevet = StringSplit($message, "\n", 1)

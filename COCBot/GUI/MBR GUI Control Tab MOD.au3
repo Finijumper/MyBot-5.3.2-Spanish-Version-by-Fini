@@ -86,24 +86,6 @@ Func MultiFarming()
 		If GUICtrlRead($chkBotStop) = $GUI_CHECKED Then
 			GUICtrlSetState($chkBotStop, $GUI_UNCHECKED)
 		EndIf
-		; IceCube (Multy-Farming Fast Switch v1.3)
-		GUICtrlSetState($btnmultyAcc1, $GUI_DISABLE)
-		GUICtrlSetState($btnmultyAcc2, $GUI_DISABLE)
-		GUICtrlSetState($btnmultyAcc3, $GUI_DISABLE)
-		GUICtrlSetState($btnmultyAcc4, $GUI_DISABLE)
-		If  FileExists(@ScriptDir & "\images\Multyfarming\Accmain.bmp") Then
-			GUICtrlSetState($btnmultyAcc1, $GUI_ENABLE)
-		EndIf
-		If  FileExists(@ScriptDir & "\images\Multyfarming\AccSecond.bmp") Then
-			GUICtrlSetState($btnmultyAcc2, $GUI_ENABLE)
-		EndIf
-		If  FileExists(@ScriptDir & "\images\Multyfarming\AccThird.bmp") Then
-			GUICtrlSetState($btnmultyAcc3, $GUI_ENABLE)
-		EndIf
-		If  FileExists(@ScriptDir & "\images\Multyfarming\AccFourth.bmp") Then
-			GUICtrlSetState($btnmultyAcc4, $GUI_ENABLE)
-		EndIf
-		; IceCube (Multy-Farming Fast Switch v1.3)
 	Else
 		$ichkMultyFarming = 0
 		GUICtrlSetState($Account, $GUI_DISABLE)
@@ -111,13 +93,26 @@ Func MultiFarming()
 		For $i = $grpControls To $cmbHoursStop
 			GUICtrlSetState($i, $GUI_ENABLE)
 		Next
-		; IceCube (Multy-Farming Fast Switch v1.3)
-		GUICtrlSetState($btnmultyAcc1, $GUI_DISABLE)
-		GUICtrlSetState($btnmultyAcc2, $GUI_DISABLE)
-		GUICtrlSetState($btnmultyAcc3, $GUI_DISABLE)
-		GUICtrlSetState($btnmultyAcc4, $GUI_DISABLE)
-		; IceCube (Multy-Farming Fast Switch v1.3)
 	EndIf
+	
+	; IceCube (Multy-Farming Revamp v1.6)
+	GUICtrlSetState($btnmultyAcc1, $GUI_DISABLE)
+	GUICtrlSetState($btnmultyAcc2, $GUI_DISABLE)
+	GUICtrlSetState($btnmultyAcc3, $GUI_DISABLE)
+	GUICtrlSetState($btnmultyAcc4, $GUI_DISABLE)
+	If  FileExists(@ScriptDir & "\images\Multyfarming\Accmain.bmp") AND FileExists(@ScriptDir & "\images\Multyfarming\main.bmp") Then
+		GUICtrlSetState($btnmultyAcc1, $GUI_ENABLE)
+	EndIf
+	If  FileExists(@ScriptDir & "\images\Multyfarming\AccSecond.bmp") AND FileExists(@ScriptDir & "\images\Multyfarming\Second.bmp") Then
+		GUICtrlSetState($btnmultyAcc2, $GUI_ENABLE)
+	EndIf
+	If  FileExists(@ScriptDir & "\images\Multyfarming\AccThird.bmp") AND FileExists(@ScriptDir & "\images\Multyfarming\Third.bmp") Then
+		GUICtrlSetState($btnmultyAcc3, $GUI_ENABLE)
+	EndIf
+	If  FileExists(@ScriptDir & "\images\Multyfarming\AccFourth.bmp") AND FileExists(@ScriptDir & "\images\Multyfarming\Fourth.bmp") Then
+		GUICtrlSetState($btnmultyAcc4, $GUI_ENABLE)
+	EndIf
+	; IceCube (Multy-Farming Revamp v1.6)
 EndFunc   ;==>MultiFarming
 
 Func Account()
@@ -125,89 +120,108 @@ Func Account()
 	IniWrite($config, "MOD", "Account", $iAccount)
 EndFunc
 
-; IceCube (Multy-Farming Fast Switch v1.3)
+; IceCube (Multy-Farming Revamp v1.6)
+;Main Account
+Func btnmultyDetectAcc()
+	If $RunState Then Return
+	LockGUI()
+	SetLog("Multy-farming account detection requested ...", $COLOR_BLUE)
+	SetLog("DO NOT STOP OR PAUSE BOT", $COLOR_RED)
+	$RunState = True
+	waitMainScreen()
+	if IsMainPage()  Then
+		DetectAccount()
+	Else
+		SetLog("Multy-farming account detection canceled", $COLOR_RED)
+	EndIf
+	$RunState = False
+	UnLockGUI()
+EndFunc
 ;Main Account
 Func btnmultyAcc1()
+	If $RunState Then Return
 	LockGUI()
 	SetLog("Multy-farming Main account switch requested ...", $COLOR_BLUE)
 	SetLog("DO NOT STOP OR PAUSE BOT", $COLOR_RED)
-	ResumeAndroid()
-	SetLog("Multy-farming Main account switch in progress ...", $COLOR_BLUE)
-	if DetectCurrentAccount(1) Then	
-	$RunState = True
-	checkMainScreen()
-	$iSwCount = 0
-	SwitchAccount("Main")
-	checkMainScreen()	
-	$RunState = False
-	DetectAccount()
+		$RunState = True
+	waitMainScreen()
+	if IsMainPage() AND DetectCurrentAccount("Main") Then	
+		checkMainScreen()
+		$iSwCount = 0
+		SwitchAccount("Main")
+		checkMainScreen()	
+		DetectAccount()
 		SetLog("Multy-farming Main account switch completed", $COLOR_BLUE)
 	Else
 		SetLog("Multy-farming account switch canceled", $COLOR_RED)
 	EndIf
+	$RunState = False
 	UnLockGUI()
 EndFunc
 ;Second Account
 Func btnmultyAcc2()
+	If $RunState Then Return
 	LockGUI()
 	SetLog("Multy-farming Second account switch requested ...", $COLOR_BLUE)
 	SetLog("DO NOT STOP OR PAUSE BOT", $COLOR_RED)
-	ResumeAndroid()
+		$RunState = True
+	waitMainScreen()
 	SetLog("Multy-farming Second account switch in progress ...", $COLOR_BLUE)
-	if DetectCurrentAccount(2) Then
-	$RunState = True
-	checkMainScreen()
-	$iSwCount = 0
-	SwitchAccount("Second")
-	checkMainScreen()
-	$RunState = False
-	DetectAccount()
+	if IsMainPage() AND DetectCurrentAccount("Second") Then
+		checkMainScreen()
+		$iSwCount = 0
+		SwitchAccount("Second")
+		checkMainScreen()
+		DetectAccount()
 		SetLog("Multy-farming Second account switch completed", $COLOR_BLUE)
 	Else
 		SetLog("Multy-farming account switch canceled", $COLOR_RED)
 	EndIf
+	$RunState = False
 	UnLockGUI()
 EndFunc
 ;Third Account
 Func btnmultyAcc3()
+	If $RunState Then Return
 	LockGUI()
 	SetLog("Multy-farming Third account switch requested ...", $COLOR_BLUE)
 	SetLog("DO NOT STOP OR PAUSE BOT", $COLOR_RED)
-	ResumeAndroid()
+		$RunState = True
+	waitMainScreen()
 	SetLog("Multy-farming Third account switch in progress ...", $COLOR_BLUE)
-	if DetectCurrentAccount(3) Then
-	$RunState = True
-	checkMainScreen()
-	$iSwCount = 0
-	SwitchAccount("Third")
-	checkMainScreen()
-	$RunState = False
-	DetectAccount()
+	if IsMainPage() AND DetectCurrentAccount("Third") Then
+		checkMainScreen()
+		$iSwCount = 0
+		SwitchAccount("Third")
+		checkMainScreen()
+		DetectAccount()
 		SetLog("Multy-farming Third account switch completed", $COLOR_BLUE)
 	Else
 		SetLog("Multy-farming account switch canceled", $COLOR_RED)
 	EndIf
+	$RunState = False
 	UnLockGUI()
 EndFunc
 ;Fourth Account
 Func btnmultyAcc4()
+	If $RunState Then Return
 	LockGUI()
 	SetLog("Multy-farming Fourth account switch requested ...", $COLOR_BLUE)
 	SetLog("DO NOT STOP OR PAUSE BOT", $COLOR_RED)
-	ResumeAndroid()
+		$RunState = True
+	waitMainScreen()
 	SetLog("Multy-farming Fourth account switch in progress ...", $COLOR_BLUE)
-	if DetectCurrentAccount(1) Then
-	$RunState = True
-	checkMainScreen()
-	$iSwCount = 0
-	SwitchAccount("Fourth")
-	checkMainScreen()
-	$RunState = False
-	DetectAccount()
+	if IsMainPage() AND DetectCurrentAccount("Fourth") Then
+		checkMainScreen()
+		$iSwCount = 0
+		SwitchAccount("Fourth")
+		checkMainScreen()
+		DetectAccount()
 		SetLog("Multy-farming Fourth account switch completed", $COLOR_BLUE)
 	Else
 		SetLog("Multy-farming account switch canceled", $COLOR_RED)
 	EndIf
+	$RunState = False
 	UnLockGUI()
 EndFunc
 ;Lock GUI
@@ -302,7 +316,7 @@ Func UnLockGUI()
 		_BlockInputEx(0, "", "", $HWnD)
 		SetRedrawBotWindow(True) ; must be here at bottom, after SetLog, so Log refreshes. You could also use SetRedrawBotWindow(True, False) and let the events handle the refresh.
 EndFunc
-; IceCube(Multy-Farming Fast Switch v1.2)
+; IceCube (Multy-Farming Revamp v1.6)
 
 
 	; Android Settings
@@ -343,3 +357,11 @@ Func chkCoCStats()
 	  GUICtrlSetState($txtAPIKey, $GUI_DISABLE)
 	EndIf
 EndFunc ;==> chkCoCStats
+
+Func chkFastADBClicks()
+	If GUICtrlRead($chkFastADBClicks) = $GUI_CHECKED Then
+		$AndroidAdbClicksEnabled = True
+	Else
+		$AndroidAdbClicksEnabled = False
+	EndIf
+EndFunc   ;==>chkFastADBClicks

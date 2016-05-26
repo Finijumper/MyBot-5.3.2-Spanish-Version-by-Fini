@@ -29,11 +29,13 @@ $tabMain = GUICtrlCreateTab(5, 65, 461, 445, $TCS_MULTILINE)
 ;~ Header Menu
 ;~ ------------------------------------------------------
 
-$DonateMenu = GUICtrlCreateMenu("Donación PayPal")
-$DonateConfig = GUICtrlCreateMenuItem("Invitame a un café", $DonateMenu)
+$DonateMenu = GUICtrlCreateMenu("&Donación PayPal")
+$DonateConfig = GUICtrlCreateMenuItem("Quieres invitarme a un café?", $DonateMenu)
 $AboutMenu = GUICtrlCreateMenu("Ayuda")
-$ModSupportConfig = GUICtrlCreateMenuItem("Spoporte del Mod", $AboutMenu)
 $AboutConfig = GUICtrlCreateMenuItem("Sobre nosotros", $AboutMenu)
+$CheckVersionConfig = GUICtrlCreateMenuItem("Comprobar versión", $AboutMenu)
+$DownloadLatestConfig = GUICtrlCreateMenuItem("Descargar la última versión", $AboutMenu)
+$ModSupportConfig = GUICtrlCreateMenuItem("Soporte del Mod", $AboutMenu)
 GUICtrlSetOnEvent(-1, "")
 
 ;~ ------------------------------------------------------

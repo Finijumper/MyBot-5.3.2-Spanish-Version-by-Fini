@@ -118,8 +118,12 @@ Func GUIControl($hWind, $iMsg, $wParam, $lParam)
 					btnAttackNowTS()
 				Case $DonateConfig
 					ShellExecute("https://www.paypal.me/Finijumper")
+				Case $CheckVersionConfig
+					If CheckMODVersion() Then MsgBox(0, "", "You Are Using The Latest Version Of Mod All In One")
+				Case $DownloadLatestConfig
+					ShellExecute("https://github.com/amintalkin/Merged-MyBot-5.3.2-AIO-v1.3.5-B25/archive/master.zip")
 				Case $ModSupportConfig
-					ShellExecute("https://mybot.run/forums/index.php?/topic/19006-mybot-532-spanish-version-001beta-todos-los-mods-en-1-14-05-2016/")
+					ShellExecute("https://mybot.run/forums/index.php?/topic/19006-mybot-532-spanish-version-003beta-todos-los-mods-en-1-20-05-2016/")
 				Case $AboutConfig
 					OpenGUIAbout()
 				Case $btnDeletePBMessages
@@ -196,6 +200,8 @@ Func BotClose()
    setupProfile()
    SaveConfig()
    AndroidAdbTerminateShellInstance()
+   ; Clean the ADB files from this instance
+   cleanUnusedADBFiles(True)
    ; Close Mutexes
    If $hMutex_BotTitle <> 0 Then _WinAPI_CloseHandle($hMutex_BotTitle)
    If $hMutex_Profile <> 0 Then _WinAPI_CloseHandle($hMutex_Profile)
