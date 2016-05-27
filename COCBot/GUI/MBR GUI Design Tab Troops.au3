@@ -93,16 +93,16 @@ $tabTroops = GUICtrlCreateTabItem(GetTranslated(1,1, "Troops"))
 	$y =420
 	$grpMods = GUICtrlCreateGroup("Other Options", $x - 20, $y + 2, 150, 83)
 		$y +=18
-		$chkDontRemove = GUICtrlCreateCheckbox("Don't Empty Barracks", $x - 10, $y, -1, -1)
-			$txtTip ="The bot will not remove existing troops in the barracks when training."
+		$chkDontRemove = GUICtrlCreateCheckbox("No Vaciar Cuarteles", $x - 10, $y, -1, -1)
+			$txtTip ="El bot no vaciará las tropas que se estén entrenando en los cuarteles."
 			GUICtrlSetTip(-1, $txtTip)
 		$y +=21
-		$chkBarrackSpell = GUICtrlCreateCheckbox("Spell Barrack Mode", $x - 10, $y, -1, -1)
-			$txtTip ="Train spells continuously in barrack mode (Lightning, Heal, and Rage only)."
+		$chkBarrackSpell = GUICtrlCreateCheckbox("Modo de Hechizos", $x - 10, $y, -1, -1)
+			$txtTip ="Entrena hechizos continuamente (Solo Rayo, Cura y Rabia)."
 			GUICtrlSetTip(-1, $txtTip)
 		$y += 21
-		$chkWaitForSpells = GUICtrlCreateCheckbox("Wait For Spells", $x - 10, $y, -1, -1)
-			$txtTip ="The bot will wait to attack until all configured spells are trained."
+		$chkWaitForSpells = GUICtrlCreateCheckbox("Esperar a los Hechizos", $x - 10, $y, -1, -1)
+			$txtTip ="El bot esperará hasta que todos los hechizos configurados se hayan entrenado."
 			GUICtrlSetTip(-1, $txtTip)
 
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
