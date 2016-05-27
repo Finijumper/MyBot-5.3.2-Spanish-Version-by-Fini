@@ -117,13 +117,13 @@ Func GUIControl($hWind, $iMsg, $wParam, $lParam)
 				Case $btnAttackNowTS
 					btnAttackNowTS()
 				Case $DonateConfig
-					ShellExecute("https://www.paypal.me/Finijumper/")
+					ShellExecute("https://www.paypal.me/Finijumper")
 				Case $CheckVersionConfig
-					If CheckMODVersion() Then MsgBox(0, "", "Estás usando la última versión de MyBot 5.3.2 Spanish Version by Fini")
+					If CheckMODVersion() Then MsgBox(0, "", "Estás usando la última versión del Mod")
 				Case $DownloadLatestConfig
 					ShellExecute("https://github.com/Finijumper/MyBot-5.3.2-Spanish-Version-by-Fini/archive/master.zip")
 				Case $ModSupportConfig
-					ShellExecute("https://mybot.run/forums/index.php?/topic/19006-mybot-532-spanish-version-010beta-todos-los-mods-en-1-26-05-2016//")
+					ShellExecute("https://mybot.run/forums/index.php?/topic/19006-mybot-532-spanish-version-010beta-todos-los-mods-en-1-26-05-2016/")
 				Case $AboutConfig
 					OpenGUIAbout()
 				Case $btnDeletePBMessages
